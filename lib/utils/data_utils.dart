@@ -32,6 +32,15 @@ class DataUtils {
     }
   }
 
+  static Future<void> saveLoginState(bool isLogin) async {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      sp..setBool(SP_IS_LOGIN, true);
+  }
+
+  static Future<void> clearLoginState() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp..setBool(SP_IS_LOGIN, false);
+  }
   static Future<void> clearLoginInfo() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     sp

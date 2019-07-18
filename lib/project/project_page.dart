@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qkdoc_flutter/login/login_page.dart';
 import 'package:qkdoc_flutter/project/searchbar_page.dart';
 import 'package:qkdoc_flutter/constants/constants.dart';
+import 'package:qkdoc_flutter/widget/login_notice.dart';
+import 'package:qkdoc_flutter/widget/update_version.dart';
 
 class ProjectPage extends StatefulWidget {
   @override
@@ -17,14 +19,18 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: SearchBarPage(),
-      ),
       body: SingleChildScrollView(
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Container(
+                height: 52.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: SearchBarPage(),
+                  ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
@@ -163,8 +169,11 @@ class _ProjectPageState extends State<ProjectPage> {
                     RaisedButton(
                       color: Color(AppColors.APP_THEME),
                       onPressed: () {
-                        _navPush(context, LoginPage());
+//                        _navPush(context, LoginPage());
+//                        _updateVersionHandle();
+                        _showLoginDialog();
                       },
+
                       padding: EdgeInsets.all(10),
                       child: Text(
                         "搜索",
@@ -184,7 +193,38 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
+
+  Future<void> _showLoginDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        final data = LoginNoticeInfo(title: "", content: '');
+        return LoginDialog(data: data);
+      },
+    );
+  }
+
+// 更新 app 弹窗
+  Future<void> _updateVersionHandle() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        final data = UpdateVersion(
+            appStoreUrl: 'https://itunes.apple.com/cn/app/id1380512641',
+            versionName: 'v1.1.1',
+            apkUrl:
+            "https://wbd-app.oss-cn-shenzhen.aliyuncs.com/xls/xls-1.5.5_23_20190709_20.20.apk",
+            content:
+            '1.优化订单显示\n2.解决数据加载异常问题\n3.优化无网络显示效果\n4.解决iPhoneX 兼容性问题\n5.修复定位错误问题');
+        return UpdateVersionDialog(data: data);
+      },
+    );
+  }
+
   _navPush(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
+

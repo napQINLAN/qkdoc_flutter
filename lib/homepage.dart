@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qkdoc_flutter/message/message_page.dart';
 import 'package:qkdoc_flutter/personal/personal_page.dart';
 import 'package:qkdoc_flutter/project/project_page.dart';
+import 'package:qkdoc_flutter/widget/login_notice.dart';
 import 'package:qkdoc_flutter/widget/navigation_icon_view.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
     _navigationIconViews = [
       NavigationIconView(
           title: '项目中心',
@@ -77,4 +79,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 }

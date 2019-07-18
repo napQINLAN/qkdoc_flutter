@@ -4,6 +4,7 @@ import 'package:qkdoc_flutter/utils/data_utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import 'package:qkdoc_flutter/widget/snackbar.dart';
 
 import 'package:qkdoc_flutter/utils/net_utils.dart';
 
@@ -15,15 +16,23 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var _contollerUserName = TextEditingController();
   var _contollerPassword = TextEditingController();
-
+  GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey();
   bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      key: scaffoldKey,
       appBar: AppBar(
+        //左侧图标
+        leading: IconButton(icon:Container(child: Icon(Icons.arrow_back_ios),),onPressed: (){
+          Navigator.pop(context);
+        },),
+        //居中
         centerTitle: true,
         title: Text("登录"),
+
       ),
       body: Container(
         child: Padding(
@@ -64,17 +73,17 @@ class _LoginPageState extends State<LoginPage> {
                 maxLength: 20,
                 maxLines: 1,
               ),
-
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   RaisedButton(
                     onPressed: () {
-                      //发布动弹
+                      //登录
                       DataUtils.isLogin().then((isLogin) {
                         //网络请求
-                        if(!isLogin){
-                          _login(context, _contollerUserName.text,_contollerPassword.text);
+                        if (!isLogin) {
+                          _login(context, scaffoldKey, _contollerUserName.text,
+                              _contollerPassword.text);
                         }
                       });
                     },
@@ -94,28 +103,26 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future _login(BuildContext context, String username, String password) async {
-    if(username.isEmpty && password.isEmpty){
-      _showSnackBar(context, '用户名或密码不能为空！');
-      return ;
+  Future _login(BuildContext context, GlobalKey<ScaffoldState> scaffoldkey,
+      String username, String password) async {
+    if (username.isEmpty && password.isEmpty) {
+      _showSnackBar(scaffoldkey, context, '用户名或密码不能为空！');
+      return;
     }
-
     Map<String, String> params = new Map();
     params['username'] = username;
     params['password'] = password;
-
-    NetUtils.post(AppUrls.LOGIN, params).then((data){
-      if (data != null && data.isNotEmpty) {
-        print('MY_INFORMATION: $data');
-      }
+    NetUtils.post(AppUrls.LOGIN, params).then((data) {
+      _showSnackBar(scaffoldkey, context, '登录成功');
+      DataUtils.saveLoginState(true);
+//      if (data != null && data.isNotEmpty) {
+//        print('MY_INFORMATION: $data');
+//      }
     });
-
   }
 
-  void _showSnackBar(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-      content: new Text(message),
-      duration: Duration(milliseconds: 500),
-    ));
+  void _showSnackBar(GlobalKey<ScaffoldState> scaffoldkey, BuildContext context,
+      String message) {
+    MySnackBar.SnackBarByKey(scaffoldkey, context, message);
   }
 }
